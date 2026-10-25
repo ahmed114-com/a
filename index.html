@@ -1,0 +1,2139 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>منصة العرض التفاعلي الاحترافية | Royal HTML Annotator</title>
+    
+    <!-- Google Fonts: Cairo -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --matte-black: #111827;
+            --matte-dark: #0B0F17;
+            --matte-surface: #1F2937;
+            --royal-blue: #2563EB;
+            --royal-blue-light: #3B82F6;
+            --royal-blue-glow: rgba(37, 99, 235, 0.45);
+            --gold-metallic: #D4AF37;
+            --gold-bright: #F59E0B;
+            --gold-glow: rgba(212, 175, 55, 0.35);
+            --pure-white: #FFFFFF;
+            --text-muted: #9CA3AF;
+            --danger: #EF4444;
+            --glass-bg: rgba(17, 24, 39, 0.85);
+            --glass-border: rgba(212, 175, 55, 0.28);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body, html {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background-color: var(--matte-dark);
+            color: var(--pure-white);
+        }
+
+        /* ==================== شاشة البداية (Welcome Screen) ==================== */
+        #welcome-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            background: 
+                radial-gradient(circle at 15% 20%, rgba(37, 99, 235, 0.18) 0%, transparent 45%),
+                radial-gradient(circle at 85% 80%, rgba(212, 175, 55, 0.15) 0%, transparent 45%),
+                linear-gradient(135deg, #090D16 0%, #111827 50%, #0B0F19 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s;
+        }
+
+        #welcome-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .brand-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 20px;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 50px;
+            color: var(--gold-bright);
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.15);
+        }
+
+        .welcome-title {
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 12px;
+            background: linear-gradient(90deg, #FFFFFF 0%, #E5E7EB 40%, #F59E0B 80%, #D4AF37 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .welcome-subtitle {
+            color: var(--text-muted);
+            font-size: clamp(0.95rem, 1.5vw, 1.15rem);
+            text-align: center;
+            max-width: 650px;
+            margin-bottom: 36px;
+            line-height: 1.7;
+        }
+
+        .drop-zone {
+            width: 100%;
+            max-width: 720px;
+            min-height: 300px;
+            background: rgba(17, 24, 39, 0.75);
+            backdrop-filter: blur(16px);
+            border: 2px dashed rgba(212, 175, 55, 0.45);
+            border-radius: 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 24px;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55), inset 0 0 40px rgba(37, 99, 235, 0.05);
+        }
+
+        .drop-zone::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(37, 99, 235, 0.12), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.35s;
+        }
+
+        .drop-zone:hover, .drop-zone.dragover {
+            border-color: var(--gold-bright);
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.7), 0 0 35px rgba(212, 175, 55, 0.25);
+        }
+
+        .drop-zone:hover::before, .drop-zone.dragover::before {
+            opacity: 1;
+        }
+
+        .upload-icon-circle {
+            width: 88px;
+            height: 88px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(212, 175, 55, 0.2));
+            border: 1px solid rgba(212, 175, 55, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.3rem;
+            color: var(--gold-bright);
+            margin-bottom: 22px;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+            transition: transform 0.35s;
+        }
+
+        .drop-zone:hover .upload-icon-circle {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .drop-zone h3 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--pure-white);
+            margin-bottom: 8px;
+            z-index: 1;
+        }
+
+        .drop-zone p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 24px;
+            z-index: 1;
+        }
+
+        .welcome-actions {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+            z-index: 1;
+        }
+
+        .btn-royal {
+            padding: 12px 28px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: none;
+            transition: all 0.25s ease;
+        }
+
+        .btn-primary-gold {
+            background: linear-gradient(135deg, #F59E0B 0%, #D4AF37 100%);
+            color: #090D16;
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.35);
+        }
+
+        .btn-primary-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(245, 158, 11, 0.5);
+        }
+
+        .btn-secondary-blue {
+            background: rgba(37, 99, 235, 0.18);
+            color: var(--pure-white);
+            border: 1px solid rgba(37, 99, 235, 0.5);
+        }
+
+        .btn-secondary-blue:hover {
+            background: var(--royal-blue);
+            box-shadow: 0 8px 25px var(--royal-blue-glow);
+        }
+
+        .features-strip {
+            display: flex;
+            gap: 24px;
+            margin-top: 36px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .feature-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: #D1D5DB;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 8px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .feature-pill i {
+            color: var(--gold-bright);
+        }
+
+        /* ==================== منطقة العرض (Iframe Workspace) ==================== */
+        #workspace {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: #FFFFFF;
+        }
+
+        #html-viewer-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+            background: #FFFFFF;
+        }
+
+        /* ==================== شريط الأدوات العائم (Floating Dock) ==================== */
+        #floating-dock-wrapper {
+            position: fixed;
+            bottom: 22px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        #floating-dock-wrapper.minimized {
+            transform: translateX(-50%) translateY(140px) scale(0.7);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .floating-dock {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            padding: 10px 16px;
+            border-radius: 26px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 
+                0 20px 50px rgba(0, 0, 0, 0.65),
+                0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+                0 0 25px rgba(212, 175, 55, 0.12);
+        }
+
+        .dock-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .dock-divider {
+            width: 1px;
+            height: 32px;
+            background: linear-gradient(to bottom, transparent, rgba(212, 175, 55, 0.35), transparent);
+            margin: 0 4px;
+        }
+
+        .dock-btn {
+            position: relative;
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            border: 1px solid transparent;
+            background: rgba(255, 255, 255, 0.04);
+            color: #E5E7EB;
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .dock-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--pure-white);
+            transform: translateY(-4px);
+            border-color: rgba(212, 175, 55, 0.35);
+        }
+
+        .dock-btn.active {
+            background: linear-gradient(135deg, var(--royal-blue) 0%, #1D4ED8 100%);
+            color: var(--pure-white);
+            border-color: var(--gold-bright);
+            box-shadow: 0 8px 20px var(--royal-blue-glow), 0 0 12px var(--gold-glow);
+            transform: translateY(-4px);
+        }
+
+        .dock-btn.gold-tool {
+            color: var(--gold-bright);
+        }
+
+        .dock-btn.gold-tool.active {
+            background: linear-gradient(135deg, #F59E0B 0%, #B45309 100%);
+            color: #111827;
+            border-color: #FFFFFF;
+            box-shadow: 0 8px 22px rgba(245, 158, 11, 0.5);
+        }
+
+        .dock-btn.danger-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            color: #FCA5A5;
+            border-color: var(--danger);
+        }
+
+        .dock-btn .color-dot {
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 14px;
+            height: 4px;
+            border-radius: 4px;
+            background: var(--gold-bright);
+            box-shadow: 0 0 4px rgba(0,0,0,0.6);
+        }
+
+        .dock-btn .dbl-badge {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            font-size: 0.55rem;
+            color: var(--gold-bright);
+            opacity: 0.75;
+        }
+
+        /* التلميحات العربية (Tooltips) */
+        .dock-btn::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 14px);
+            left: 50%;
+            transform: translateX(-50%) translateY(8px);
+            background: var(--matte-black);
+            color: var(--pure-white);
+            border: 1px solid var(--gold-metallic);
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            z-index: 1200;
+        }
+
+        .dock-btn:hover::after {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* زر استعادة الشريط المصغر */
+        #restore-dock-btn {
+            position: fixed;
+            bottom: 18px;
+            left: 18px;
+            z-index: 1150;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--gold-bright);
+            color: var(--gold-bright);
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6), 0 0 15px var(--gold-glow);
+            transform: scale(0);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        #restore-dock-btn.visible {
+            transform: scale(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #restore-dock-btn:hover {
+            transform: scale(1.1) rotate(15deg);
+            background: var(--royal-blue);
+            color: var(--pure-white);
+        }
+
+        /* ==================== القائمة المنبثقة لتخصيص الأدوات (Popover) ==================== */
+        #tool-popover {
+            position: fixed;
+            bottom: 98px;
+            left: 50%;
+            transform: translateX(-50%) translateY(15px) scale(0.95);
+            width: 300px;
+            background: rgba(17, 24, 39, 0.95);
+            backdrop-filter: blur(22px);
+            border: 1px solid var(--gold-metallic);
+            border-radius: 22px;
+            padding: 18px;
+            z-index: 1250;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75), 0 0 25px rgba(212, 175, 55, 0.2);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        #tool-popover.open {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(0) scale(1);
+        }
+
+        .popover-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .popover-title {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--gold-bright);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .popover-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .popover-close:hover {
+            color: var(--pure-white);
+        }
+
+        .popover-section {
+            margin-bottom: 14px;
+        }
+
+        .popover-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .popover-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #D1D5DB;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            align-items: center;
+        }
+
+        .color-swatch {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .color-swatch:hover {
+            transform: scale(1.15);
+        }
+
+        .color-swatch.selected {
+            border-color: var(--pure-white);
+            box-shadow: 0 0 0 2px var(--gold-bright);
+            transform: scale(1.15);
+        }
+
+        .custom-color-input {
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .royal-slider {
+            width: 100%;
+            -webkit-appearance: none;
+            height: 6px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.15);
+            outline: none;
+        }
+
+        .royal-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--gold-bright);
+            border: 2px solid var(--pure-white);
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+        }
+
+        /* ==================== نافذة تأكيد مسح الكل (Confirmation Modal) ==================== */
+        #confirm-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 3000;
+            background: rgba(9, 13, 22, 0.75);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: all 0.25s ease;
+        }
+
+        #confirm-modal.open {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: var(--matte-black);
+            border: 1px solid var(--gold-metallic);
+            border-radius: 24px;
+            padding: 28px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+            transform: scale(0.9);
+            transition: transform 0.25s ease;
+        }
+
+        #confirm-modal.open .modal-card {
+            transform: scale(1);
+        }
+
+        .modal-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: var(--danger);
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+
+        .modal-card h4 {
+            font-size: 1.25rem;
+            margin-bottom: 8px;
+            color: var(--pure-white);
+        }
+
+        .modal-card p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .btn-modal {
+            flex: 1;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--pure-white);
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-confirm-danger {
+            background: var(--danger);
+            color: var(--pure-white);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.35);
+        }
+
+        .btn-confirm-danger:hover {
+            background: #DC2626;
+        }
+
+        /* ==================== إشعارات سريعة مؤقتة (Toast) ==================== */
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3500;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+        }
+
+        .toast-item {
+            background: rgba(17, 24, 39, 0.95);
+            border: 1px solid var(--gold-metallic);
+            color: var(--pure-white);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+            animation: toastIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .toast-item i {
+            color: var(--gold-bright);
+        }
+
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(-20px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @media (max-width: 768px) {
+            .floating-dock {
+                padding: 8px 10px;
+                gap: 4px;
+                border-radius: 20px;
+                max-width: 96vw;
+                overflow-x: auto;
+            }
+            .dock-btn {
+                width: 42px;
+                height: 42px;
+                font-size: 1rem;
+                flex-shrink: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- مدخل رفع ملفات HTML المخفي -->
+    <input type="file" id="html-file-input" accept=".html,.htm" style="display: none;">
+
+    <!-- إشعارات النظام المؤقتة -->
+    <div id="toast-container"></div>
+
+    <!-- ==================== 1. شاشة البداية الترحيبية ==================== -->
+    <div id="welcome-screen">
+        <div class="brand-badge">
+            <i class="fa-solid fa-crown"></i>
+            <span>ROYAL INTERACTIVE HTML STUDIO</span>
+        </div>
+        <h1 class="welcome-title">منصة العرض التفاعلي الاحترافية</h1>
+        <p class="welcome-subtitle">
+            بيئة عرض وشرح فائقة الفخامة لملفات HTML التفاعلية مع عزل كامل للأكواد، وثبات تام للرسومات والتظليل والملاحظات الذهبية أثناء التمرير.
+        </p>
+
+        <div class="drop-zone" id="drop-zone">
+            <div class="upload-icon-circle">
+                <i class="fa-solid fa-file-code"></i>
+            </div>
+            <h3>اسحب ملف HTML هنا أو اضغط للاختيار</h3>
+            <p>يدعم جميع ملفات HTML و HTML5 التفاعلية مع الحفاظ الكامل على الجافاسكريبت والتنسيقات</p>
+            <div class="welcome-actions">
+                <button class="btn-royal btn-primary-gold" id="btn-choose-file" type="button">
+                    <i class="fa-solid fa-folder-open"></i>
+                    <span>اختيار ملف HTML من جهازك</span>
+                </button>
+                <button class="btn-royal btn-secondary-blue" id="btn-load-demo" type="button">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>تجربة فورية بملف تفاعلي جاهز</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="features-strip">
+            <div class="feature-pill">
+                <i class="fa-solid fa-lock"></i>
+                <span>عزل 100% لأكواد الملف المرفوع</span>
+            </div>
+            <div class="feature-pill">
+                <i class="fa-solid fa-arrows-up-down"></i>
+                <span>ثبات الرسومات والملاحظات مع السكرول</span>
+            </div>
+            <div class="feature-pill">
+                <i class="fa-solid fa-star"></i>
+                <span>ملاحظات النجمة الذهبية التفاعلية</span>
+            </div>
+            <div class="feature-pill">
+                <i class="fa-solid fa-highlighter"></i>
+                <span>هايلايتر شفاف ومؤشر ليزر</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 2. مساحة العرض الصافية 100% (بدون أي شريط علوي يغطي الملف) ==================== -->
+    <div id="workspace">
+        <iframe id="html-viewer-frame" sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups"></iframe>
+    </div>
+
+    <!-- ==================== 3. القائمة المنبثقة للتخصيص (Popover) ==================== -->
+    <div id="tool-popover">
+        <div class="popover-header">
+            <div class="popover-title" id="popover-title-text">
+                <i class="fa-solid fa-sliders"></i>
+                <span>تخصيص الأداة</span>
+            </div>
+            <button class="popover-close" id="btn-close-popover">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- قسم الألوان -->
+        <div class="popover-section" id="popover-color-section">
+            <div class="popover-label">
+                <span>اللون الفاخر</span>
+            </div>
+            <div class="color-grid" id="popover-color-grid"></div>
+        </div>
+
+        <!-- قسم الحجم / السمك -->
+        <div class="popover-section">
+            <div class="popover-label">
+                <span>الحجم / السُمك</span>
+                <span id="popover-size-val">4 px</span>
+            </div>
+            <input type="range" class="royal-slider" id="popover-size-slider" min="2" max="80" value="4">
+        </div>
+
+        <!-- قسم الشفافية -->
+        <div class="popover-section" id="popover-opacity-section">
+            <div class="popover-label">
+                <span>درجة الشفافية</span>
+                <span id="popover-opacity-val">100%</span>
+            </div>
+            <input type="range" class="royal-slider" id="popover-opacity-slider" min="15" max="100" value="100">
+        </div>
+    </div>
+
+    <!-- ==================== 4. شريط الأدوات العائم (Floating Dock) ==================== -->
+    <div id="floating-dock-wrapper">
+        <div class="floating-dock" id="floating-dock">
+            
+            <!-- المجموعة 1: وضع التفاعل المؤشر -->
+            <div class="dock-group">
+                <button class="dock-btn active" data-tool="interact" data-tooltip="وضع التفاعل مع الصفحة (المؤشر العادي)">
+                    <i class="fa-solid fa-arrow-pointer"></i>
+                </button>
+            </div>
+
+            <div class="dock-divider"></div>
+
+            <!-- المجموعة 2: أدوات الكتابة والتظليل والشرح -->
+            <div class="dock-group">
+                <button class="dock-btn" data-tool="pen" data-tooltip="القلم الذكي (نقرتان للتخصيص)">
+                    <span class="dbl-badge"><i class="fa-solid fa-gear"></i></span>
+                    <i class="fa-solid fa-pen-nib"></i>
+                    <span class="color-dot" id="pen-color-indicator" style="background: #2563EB;"></span>
+                </button>
+
+                <button class="dock-btn" data-tool="highlighter" data-tooltip="الهايلايتر الشفاف (نقرتان للتخصيص)">
+                    <span class="dbl-badge"><i class="fa-solid fa-gear"></i></span>
+                    <i class="fa-solid fa-highlighter"></i>
+                    <span class="color-dot" id="highlighter-color-indicator" style="background: #FACC15;"></span>
+                </button>
+
+                <button class="dock-btn gold-tool" data-tool="star" data-tooltip="إضافة نجمة ملاحظات ذهبية">
+                    <i class="fa-solid fa-star"></i>
+                </button>
+
+                <button class="dock-btn" data-tool="laser" data-tooltip="مؤشر الليزر المضيء للشرح">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </button>
+            </div>
+
+            <div class="dock-divider"></div>
+
+            <!-- المجموعة 3: الممحاة، التراجع، الإعادة، مسح الكل -->
+            <div class="dock-group">
+                <button class="dock-btn" data-tool="eraser" data-tooltip="الممحاة الاحترافية (نقرتان لتغيير الحجم)">
+                    <span class="dbl-badge"><i class="fa-solid fa-gear"></i></span>
+                    <i class="fa-solid fa-eraser"></i>
+                </button>
+
+                <button class="dock-btn" id="btn-undo" data-tooltip="تراجع عن آخر خطوة (Ctrl+Z)">
+                    <i class="fa-solid fa-rotate-right"></i>
+                </button>
+
+                <button class="dock-btn" id="btn-redo" data-tooltip="إعادة الخطوة (Ctrl+Y)">
+                    <i class="fa-solid fa-rotate-left"></i>
+                </button>
+
+                <button class="dock-btn danger-btn" id="btn-clear-all" data-tooltip="مسح جميع الرسومات والملاحظات">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </div>
+
+            <div class="dock-divider"></div>
+
+            <!-- المجموعة 4: إدارة الملف والشاشة والشريط -->
+            <div class="dock-group">
+                <button class="dock-btn" id="btn-upload-new" data-tooltip="رفع ملف HTML جديد">
+                    <i class="fa-solid fa-folder-open"></i>
+                </button>
+
+                <button class="dock-btn" id="btn-fullscreen" data-tooltip="ملء الشاشة">
+                    <i class="fa-solid fa-expand" id="fullscreen-icon"></i>
+                </button>
+
+                <button class="dock-btn gold-tool" id="btn-minimize-dock" data-tooltip="تصغير الشريط إلى الزاوية">
+                    <i class="fa-solid fa-chevron-down"></i>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- زر استعادة الشريط عند تصغيره -->
+    <button id="restore-dock-btn" title="إظهار شريط الأدوات">
+        <i class="fa-solid fa-toolbox"></i>
+    </button>
+
+    <!-- ==================== 5. نافذة تأكيد مسح الكل ==================== -->
+    <div id="confirm-modal">
+        <div class="modal-card">
+            <div class="modal-icon">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h4>مسح جميع الشروحات والملاحظات؟</h4>
+            <p>سيتم مسح كافة الرسومات والتظليلات والنجوم الذهبية المضافة على هذه الصفحة. لن يتأثر ملف الـ HTML الأصلي.</p>
+            <div class="modal-actions">
+                <button class="btn-modal btn-cancel" id="btn-cancel-clear">إلغاء</button>
+                <button class="btn-modal btn-confirm-danger" id="btn-confirm-clear">نعم، امسح الكل</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== الكود البرمجي الكامل (JavaScript) ==================== -->
+    <script>
+        (function() {
+            'use strict';
+
+            /* ==================== إعدادات وحالة التطبيق (Application State) ==================== */
+            const PALETTE = [
+                '#2563EB', // Royal Blue
+                '#F59E0B', // Metallic Gold
+                '#EF4444', // Crimson Red
+                '#10B981', // Emerald Green
+                '#8B5CF6', // Royal Purple
+                '#EC4899', // Vibrant Pink
+                '#FACC15', // Highlighter Yellow
+                '#06B6D4', // Cyan
+                '#111827', // Matte Black
+                '#FFFFFF'  // Pure White
+            ];
+
+            const state = {
+                activeTool: 'interact', // interact | pen | highlighter | eraser | star | laser
+                popoverTool: null,
+                pen: {
+                    color: '#2563EB',
+                    size: 4,
+                    opacity: 1.0
+                },
+                highlighter: {
+                    color: '#FACC15',
+                    size: 26,
+                    opacity: 0.38
+                },
+                eraser: {
+                    size: 36
+                },
+                strokes: [],
+                redoStack: [],
+                notes: [],
+                isDrawing: false,
+                currentStroke: null,
+                laserPoints: [],
+                laserAnimId: null,
+                iframeReady: false
+            };
+
+            /* ==================== عناصر الواجهة الأساسية ==================== */
+            const welcomeScreen = document.getElementById('welcome-screen');
+            const dropZone = document.getElementById('drop-zone');
+            const fileInput = document.getElementById('html-file-input');
+            const btnChooseFile = document.getElementById('btn-choose-file');
+            const btnLoadDemo = document.getElementById('btn-load-demo');
+            const viewerFrame = document.getElementById('html-viewer-frame');
+
+            const dockWrapper = document.getElementById('floating-dock-wrapper');
+            const restoreDockBtn = document.getElementById('restore-dock-btn');
+            const toolButtons = document.querySelectorAll('.dock-btn[data-tool]');
+
+            const popover = document.getElementById('tool-popover');
+            const popoverTitle = document.getElementById('popover-title-text');
+            const popoverColorSection = document.getElementById('popover-color-section');
+            const popoverColorGrid = document.getElementById('popover-color-grid');
+            const popoverSizeSlider = document.getElementById('popover-size-slider');
+            const popoverSizeVal = document.getElementById('popover-size-val');
+            const popoverOpacitySection = document.getElementById('popover-opacity-section');
+            const popoverOpacitySlider = document.getElementById('popover-opacity-slider');
+            const popoverOpacityVal = document.getElementById('popover-opacity-val');
+
+            const penColorIndicator = document.getElementById('pen-color-indicator');
+            const highlighterColorIndicator = document.getElementById('highlighter-color-indicator');
+
+            const confirmModal = document.getElementById('confirm-modal');
+
+            // مراجع العناصر المحقونة داخل الـ iframe
+            let iframeDoc = null;
+            let iframeWin = null;
+            let overlayRoot = null;
+            let drawCanvas = null;
+            let drawCtx = null;
+            let cacheCanvas = null;
+            let cacheCtx = null;
+            let laserCanvas = null;
+            let laserCtx = null;
+            let notesLayer = null;
+            let eraserCursor = null;
+            let resizeObserver = null;
+
+            /* ==================== نظام الإشعارات المؤقتة (Toast) ==================== */
+            function showToast(message, icon = 'fa-circle-check') {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                toast.className = 'toast-item';
+                toast.innerHTML = `<i class="fa-solid ${icon}"></i><span>${message}</span>`;
+                container.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateY(-15px)';
+                    toast.style.transition = '0.3s ease';
+                    setTimeout(() => toast.remove(), 300);
+                }, 2000);
+            }
+
+            /* ==================== رفع وتحميل ملفات الـ HTML ==================== */
+            btnChooseFile.addEventListener('click', (e) => {
+                e.stopPropagation();
+                fileInput.click();
+            });
+
+            dropZone.addEventListener('click', (e) => {
+                if (e.target.closest('button')) return;
+                fileInput.click();
+            });
+
+            document.getElementById('btn-upload-new').addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) processUploadedFile(file);
+                fileInput.value = '';
+            });
+
+            ['dragenter', 'dragover'].forEach(evt => {
+                dropZone.addEventListener(evt, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropZone.classList.add('dragover');
+                });
+            });
+
+            ['dragleave', 'drop'].forEach(evt => {
+                dropZone.addEventListener(evt, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropZone.classList.remove('dragover');
+                });
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                const file = e.dataTransfer.files[0];
+                if (file) processUploadedFile(file);
+            });
+
+            function processUploadedFile(file) {
+                if (!file.name.match(/\.(html|htm)$/i) && file.type !== 'text/html') {
+                    showToast('يرجى اختيار ملف بصيغة HTML فقط', 'fa-circle-exclamation');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    loadHTMLIntoViewer(event.target.result, file.name);
+                };
+                reader.readAsText(file, 'UTF-8');
+            }
+
+            function loadHTMLIntoViewer(htmlContent, fileName) {
+                state.strokes = [];
+                state.redoStack = [];
+                state.notes = [];
+                state.iframeReady = false;
+
+                document.title = `${fileName} | منصة العرض التفاعلي`;
+                welcomeScreen.classList.add('hidden');
+
+                viewerFrame.srcdoc = htmlContent;
+                showToast(`تم فتح "${fileName}" بنجاح`, 'fa-file-circle-check');
+            }
+
+            /* ==================== حقن طبقات الرسم والملاحظات داخل الـ Iframe ==================== */
+            viewerFrame.addEventListener('load', () => {
+                try {
+                    iframeDoc = viewerFrame.contentDocument || viewerFrame.contentWindow.document;
+                    iframeWin = viewerFrame.contentWindow;
+                    if (!iframeDoc || !iframeDoc.body) return;
+
+                    injectAnnotatorLayers();
+                    state.iframeReady = true;
+                    setActiveTool(state.activeTool, false);
+                } catch (err) {
+                    console.error('Iframe injection error:', err);
+                }
+            });
+
+            function injectAnnotatorLayers() {
+                const styleEl = iframeDoc.createElement('style');
+                styleEl.id = 'royal-annotator-styles';
+                styleEl.textContent = `
+                    html {
+                        position: relative !important;
+                    }
+                    #royal-annotator-root {
+                        position: absolute !important;
+                        top: 0 !important;
+                        left: 0 !important;
+                        width: 0 !important;
+                        height: 0 !important;
+                        z-index: 99999 !important;
+                        pointer-events: none;
+                        overflow: visible !important;
+                        direction: rtl;
+                        font-family: 'Cairo', system-ui, sans-serif;
+                    }
+                    .royal-canvas-layer {
+                        position: absolute !important;
+                        top: 0 !important;
+                        left: 0 !important;
+                        display: block;
+                        pointer-events: none;
+                    }
+                    #royal-notes-layer {
+                        position: absolute !important;
+                        top: 0 !important;
+                        left: 0 !important;
+                        width: 0;
+                        height: 0;
+                        overflow: visible;
+                        pointer-events: none;
+                        z-index: 3;
+                    }
+                    /* مؤشر الممحاة الدائري الشفاف بحدود سوداء واضحة */
+                    #royal-eraser-cursor {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        border: 2px solid #000000;
+                        box-shadow: 0 0 0 1.5px rgba(255,255,255,0.95), inset 0 0 4px rgba(0,0,0,0.25);
+                        background: rgba(255, 255, 255, 0.12);
+                        border-radius: 50%;
+                        pointer-events: none;
+                        transform: translate(-50%, -50%);
+                        z-index: 10;
+                        display: none;
+                    }
+                    /* النجمة التفاعلية الذهبية */
+                    .royal-star-item {
+                        position: absolute;
+                        pointer-events: auto !important;
+                        z-index: 20;
+                    }
+                    .royal-star-btn {
+                        width: 42px;
+                        height: 42px;
+                        border-radius: 50%;
+                        background: radial-gradient(circle at 30% 30%, #FDE047, #F59E0B 60%, #B45309 100%);
+                        border: 2px solid #FFFFFF;
+                        box-shadow: 0 6px 18px rgba(245, 158, 11, 0.6), 0 0 12px rgba(212, 175, 55, 0.8);
+                        color: #111827;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        cursor: pointer;
+                        transform: translate(-50%, -50%);
+                        transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s;
+                        animation: starPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+                    }
+                    .royal-star-btn:hover {
+                        transform: translate(-50%, -50%) scale(1.18) rotate(12deg);
+                        box-shadow: 0 10px 25px rgba(245, 158, 11, 0.85), 0 0 20px #FACC15;
+                    }
+                    .royal-star-btn svg {
+                        width: 22px;
+                        height: 22px;
+                        fill: #111827;
+                    }
+                    @keyframes starPop {
+                        from { transform: translate(-50%, -50%) scale(0); }
+                        to { transform: translate(-50%, -50%) scale(1); }
+                    }
+                    /* بطاقة الملاحظة اللاصقة */
+                    .royal-sticky-card {
+                        position: absolute;
+                        top: 26px;
+                        right: -20px;
+                        width: 270px;
+                        background: #111827;
+                        border: 1.5px solid #D4AF37;
+                        border-radius: 18px;
+                        box-shadow: 0 20px 45px rgba(0,0,0,0.65);
+                        padding: 12px;
+                        color: #FFFFFF;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 10px;
+                        transform-origin: top right;
+                        transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+                        z-index: 30;
+                    }
+                    .royal-sticky-card.collapsed {
+                        transform: scale(0);
+                        opacity: 0;
+                        pointer-events: none;
+                    }
+                    .royal-sticky-header {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        border-bottom: 1px solid rgba(255,255,255,0.12);
+                        padding-bottom: 8px;
+                    }
+                    .royal-sticky-colors {
+                        display: flex;
+                        gap: 5px;
+                    }
+                    .royal-note-dot {
+                        width: 16px;
+                        height: 16px;
+                        border-radius: 50%;
+                        cursor: pointer;
+                        border: 1.5px solid rgba(255,255,255,0.5);
+                    }
+                    .royal-sticky-actions {
+                        display: flex;
+                        gap: 6px;
+                    }
+                    .royal-sticky-act-btn {
+                        background: rgba(255,255,255,0.1);
+                        border: none;
+                        color: #FFFFFF;
+                        width: 26px;
+                        height: 26px;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 12px;
+                        transition: 0.2s;
+                    }
+                    .royal-sticky-act-btn:hover {
+                        background: rgba(255,255,255,0.25);
+                    }
+                    .royal-sticky-act-btn.del:hover {
+                        background: #EF4444;
+                    }
+                    .royal-sticky-textarea {
+                        width: 100%;
+                        min-height: 95px;
+                        background: rgba(255,255,255,0.06);
+                        border: 1px solid rgba(255,255,255,0.15);
+                        border-radius: 12px;
+                        padding: 10px;
+                        color: inherit;
+                        font-family: 'Cairo', sans-serif;
+                        font-size: 14px;
+                        line-height: 1.6;
+                        resize: vertical;
+                        outline: none;
+                        direction: rtl;
+                    }
+                    .royal-sticky-textarea:focus {
+                        border-color: #F59E0B;
+                        background: rgba(255,255,255,0.1);
+                    }
+                `;
+                iframeDoc.head.appendChild(styleEl);
+
+                overlayRoot = iframeDoc.createElement('div');
+                overlayRoot.id = 'royal-annotator-root';
+
+                drawCanvas = iframeDoc.createElement('canvas');
+                drawCanvas.className = 'royal-canvas-layer';
+                drawCanvas.style.zIndex = '1';
+
+                laserCanvas = iframeDoc.createElement('canvas');
+                laserCanvas.className = 'royal-canvas-layer';
+                laserCanvas.style.zIndex = '2';
+
+                notesLayer = iframeDoc.createElement('div');
+                notesLayer.id = 'royal-notes-layer';
+
+                eraserCursor = iframeDoc.createElement('div');
+                eraserCursor.id = 'royal-eraser-cursor';
+
+                overlayRoot.appendChild(drawCanvas);
+                overlayRoot.appendChild(laserCanvas);
+                overlayRoot.appendChild(notesLayer);
+                overlayRoot.appendChild(eraserCursor);
+
+                iframeDoc.body.appendChild(overlayRoot);
+
+                drawCtx = drawCanvas.getContext('2d');
+                laserCtx = laserCanvas.getContext('2d');
+
+                cacheCanvas = document.createElement('canvas');
+                cacheCtx = cacheCanvas.getContext('2d');
+
+                lastWidth = 0;
+                lastHeight = 0;
+                syncCanvasDimensions();
+
+                if (resizeObserver) resizeObserver.disconnect();
+                resizeObserver = new iframeWin.ResizeObserver(() => {
+                    syncCanvasDimensions();
+                });
+                resizeObserver.observe(iframeDoc.body);
+                resizeObserver.observe(iframeDoc.documentElement);
+                iframeWin.addEventListener('resize', syncCanvasDimensions);
+
+                bindIframePointerEvents();
+            }
+
+            /* ==================== مزامنة أبعاد الـ Canvas مع المحتوى الكامل للـ Iframe ==================== */
+            let lastWidth = 0;
+            let lastHeight = 0;
+
+            function syncCanvasDimensions() {
+                if (!iframeDoc || !overlayRoot) return;
+
+                const docEl = iframeDoc.documentElement;
+                const body = iframeDoc.body;
+
+                const fullWidth = Math.max(
+                    body ? body.scrollWidth : 0,
+                    docEl ? docEl.scrollWidth : 0,
+                    body ? body.offsetWidth : 0,
+                    docEl ? docEl.offsetWidth : 0,
+                    docEl ? docEl.clientWidth : 0
+                );
+
+                const fullHeight = Math.max(
+                    body ? body.scrollHeight : 0,
+                    docEl ? docEl.scrollHeight : 0,
+                    body ? body.offsetHeight : 0,
+                    docEl ? docEl.offsetHeight : 0,
+                    docEl ? docEl.clientHeight : 0
+                );
+
+                if (fullWidth !== lastWidth || fullHeight !== lastHeight) {
+                    lastWidth = fullWidth;
+                    lastHeight = fullHeight;
+
+                    drawCanvas.width = fullWidth;
+                    drawCanvas.height = fullHeight;
+
+                    cacheCanvas.width = fullWidth;
+                    cacheCanvas.height = fullHeight;
+
+                    laserCanvas.width = fullWidth;
+                    laserCanvas.height = fullHeight;
+
+                    rebuildCanvasFromHistory();
+                }
+            }
+
+            /* ==================== معالجة الرسم والممحاة والليزر والنجوم ==================== */
+            function getCanvasCoords(e) {
+                const rect = drawCanvas.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                return {
+                    x: clientX - rect.left,
+                    y: clientY - rect.top
+                };
+            }
+
+            function bindIframePointerEvents() {
+                iframeDoc.addEventListener('pointerdown', () => {
+                    closePopover();
+                });
+
+                iframeWin.addEventListener('keydown', handleKeyboardShortcuts);
+
+                drawCanvas.addEventListener('pointerdown', onPointerDown);
+                drawCanvas.addEventListener('pointermove', onPointerMove);
+                drawCanvas.addEventListener('pointerup', onPointerUp);
+                drawCanvas.addEventListener('pointercancel', onPointerUp);
+                drawCanvas.addEventListener('pointerleave', () => {
+                    eraserCursor.style.display = 'none';
+                });
+            }
+
+            function onPointerDown(e) {
+                if (state.activeTool === 'interact') return;
+                if (e.button !== undefined && e.button !== 0) return;
+
+                const pt = getCanvasCoords(e);
+
+                if (state.activeTool === 'star') {
+                    e.preventDefault();
+                    createStarNote(pt.x, pt.y);
+                    return;
+                }
+
+                if (state.activeTool === 'laser') {
+                    e.preventDefault();
+                    state.isDrawing = true;
+                    addLaserPoint(pt.x, pt.y);
+                    return;
+                }
+
+                e.preventDefault();
+                drawCanvas.setPointerCapture(e.pointerId);
+                state.isDrawing = true;
+
+                cacheCtx.clearRect(0, 0, cacheCanvas.width, cacheCanvas.height);
+                cacheCtx.drawImage(drawCanvas, 0, 0);
+
+                let strokeConfig = {};
+                if (state.activeTool === 'pen') {
+                    strokeConfig = {
+                        tool: 'pen',
+                        color: state.pen.color,
+                        size: state.pen.size,
+                        opacity: state.pen.opacity,
+                        points: [pt]
+                    };
+                } else if (state.activeTool === 'highlighter') {
+                    strokeConfig = {
+                        tool: 'highlighter',
+                        color: state.highlighter.color,
+                        size: state.highlighter.size,
+                        opacity: state.highlighter.opacity,
+                        points: [pt]
+                    };
+                } else if (state.activeTool === 'eraser') {
+                    strokeConfig = {
+                        tool: 'eraser',
+                        color: '#000000',
+                        size: state.eraser.size,
+                        opacity: 1.0,
+                        points: [pt]
+                    };
+                    updateEraserCursor(pt.x, pt.y);
+                }
+
+                state.currentStroke = strokeConfig;
+                renderActiveStroke();
+            }
+
+            function onPointerMove(e) {
+                const pt = getCanvasCoords(e);
+
+                if (state.activeTool === 'eraser') {
+                    updateEraserCursor(pt.x, pt.y);
+                }
+
+                if (state.activeTool === 'laser') {
+                    addLaserPoint(pt.x, pt.y);
+                    return;
+                }
+
+                if (!state.isDrawing || !state.currentStroke) return;
+                e.preventDefault();
+
+                state.currentStroke.points.push(pt);
+                renderActiveStroke();
+            }
+
+            function onPointerUp(e) {
+                if (state.activeTool === 'laser') {
+                    state.isDrawing = false;
+                    return;
+                }
+
+                if (!state.isDrawing || !state.currentStroke) return;
+                state.isDrawing = false;
+
+                try {
+                    if (e.pointerId !== undefined) drawCanvas.releasePointerCapture(e.pointerId);
+                } catch (_) {}
+
+                state.strokes.push(state.currentStroke);
+                state.redoStack = [];
+                state.currentStroke = null;
+            }
+
+            function updateEraserCursor(x, y) {
+                if (!eraserCursor) return;
+                eraserCursor.style.display = 'block';
+                eraserCursor.style.width = state.eraser.size + 'px';
+                eraserCursor.style.height = state.eraser.size + 'px';
+                eraserCursor.style.left = x + 'px';
+                eraserCursor.style.top = y + 'px';
+            }
+
+            /* ==================== رسم الخطوط بسلاسة (Smooth Quadratic Curves) ==================== */
+            function renderActiveStroke() {
+                if (!drawCtx || !state.currentStroke) return;
+
+                drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+                drawCtx.drawImage(cacheCanvas, 0, 0);
+                drawStrokePath(drawCtx, state.currentStroke);
+            }
+
+            function drawStrokePath(ctx, stroke) {
+                const pts = stroke.points;
+                if (!pts || pts.length === 0) return;
+
+                ctx.save();
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.lineWidth = stroke.size;
+
+                if (stroke.tool === 'eraser') {
+                    ctx.globalCompositeOperation = 'destination-out';
+                    ctx.globalAlpha = 1.0;
+                    ctx.strokeStyle = 'rgba(0,0,0,1)';
+                    ctx.fillStyle = 'rgba(0,0,0,1)';
+                } else {
+                    // يعمل بكفاءة عالية على الخلفيات الفاتحة والداكنة معاً بدون طمس النص
+                    ctx.globalCompositeOperation = 'source-over';
+                    ctx.globalAlpha = stroke.opacity;
+                    ctx.strokeStyle = stroke.color;
+                    ctx.fillStyle = stroke.color;
+                }
+
+                if (pts.length === 1) {
+                    ctx.beginPath();
+                    ctx.arc(pts[0].x, pts[0].y, stroke.size / 2, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                    return;
+                }
+
+                ctx.beginPath();
+                ctx.moveTo(pts[0].x, pts[0].y);
+
+                for (let i = 1; i < pts.length - 1; i++) {
+                    const midX = (pts[i].x + pts[i + 1].x) / 2;
+                    const midY = (pts[i].y + pts[i + 1].y) / 2;
+                    ctx.quadraticCurveTo(pts[i].x, pts[i].y, midX, midY);
+                }
+
+                const last = pts[pts.length - 1];
+                ctx.lineTo(last.x, last.y);
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            function rebuildCanvasFromHistory() {
+                if (!drawCtx) return;
+                drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+                for (const stroke of state.strokes) {
+                    drawStrokePath(drawCtx, stroke);
+                }
+            }
+
+            /* ==================== مؤشر الليزر المضيء (Laser Pointer) ==================== */
+            function addLaserPoint(x, y) {
+                state.laserPoints.push({
+                    x,
+                    y,
+                    time: performance.now()
+                });
+                if (!state.laserAnimId) {
+                    state.laserAnimId = requestAnimationFrame(renderLaserLoop);
+                }
+            }
+
+            function renderLaserLoop(now) {
+                if (!laserCtx) {
+                    state.laserAnimId = null;
+                    return;
+                }
+
+                laserCtx.clearRect(0, 0, laserCanvas.width, laserCanvas.height);
+
+                const maxAge = 900;
+                state.laserPoints = state.laserPoints.filter(p => now - p.time < maxAge);
+
+                if (state.laserPoints.length > 1) {
+                    for (let i = 1; i < state.laserPoints.length; i++) {
+                        const p1 = state.laserPoints[i - 1];
+                        const p2 = state.laserPoints[i];
+                        const age = now - p2.time;
+                        const life = Math.max(0, 1 - age / maxAge);
+
+                        laserCtx.save();
+                        laserCtx.beginPath();
+                        laserCtx.moveTo(p1.x, p1.y);
+                        laserCtx.lineTo(p2.x, p2.y);
+                        laserCtx.lineCap = 'round';
+                        laserCtx.lineWidth = 6 * life;
+                        laserCtx.strokeStyle = `rgba(239, 68, 68, ${life * 0.9})`;
+                        laserCtx.shadowColor = '#F59E0B';
+                        laserCtx.shadowBlur = 16;
+                        laserCtx.stroke();
+
+                        laserCtx.beginPath();
+                        laserCtx.moveTo(p1.x, p1.y);
+                        laserCtx.lineTo(p2.x, p2.y);
+                        laserCtx.lineWidth = 2.2 * life;
+                        laserCtx.strokeStyle = `rgba(254, 240, 138, ${life})`;
+                        laserCtx.stroke();
+                        laserCtx.restore();
+                    }
+                }
+
+                if (state.laserPoints.length > 0) {
+                    const tip = state.laserPoints[state.laserPoints.length - 1];
+                    const tipAge = now - tip.time;
+                    if (tipAge < 250) {
+                        laserCtx.save();
+                        laserCtx.beginPath();
+                        laserCtx.arc(tip.x, tip.y, 6, 0, Math.PI * 2);
+                        laserCtx.fillStyle = '#FEF08A';
+                        laserCtx.shadowColor = '#EF4444';
+                        laserCtx.shadowBlur = 20;
+                        laserCtx.fill();
+                        laserCtx.restore();
+                    }
+                }
+
+                if (state.laserPoints.length > 0) {
+                    state.laserAnimId = requestAnimationFrame(renderLaserLoop);
+                } else {
+                    state.laserAnimId = null;
+                }
+            }
+
+            /* ==================== النجمة التفاعلية والملاحظات اللاصقة (Star Sticky Notes) ==================== */
+            const NOTE_THEMES = [
+                { bg: '#111827', border: '#D4AF37', text: '#FFFFFF' },
+                { bg: '#1E3A8A', border: '#60A5FA', text: '#FFFFFF' },
+                { bg: '#FEF3C7', border: '#F59E0B', text: '#111827' },
+                { bg: '#064E3B', border: '#34D399', text: '#FFFFFF' }
+            ];
+
+            function createStarNote(x, y) {
+                if (!notesLayer) return;
+
+                const noteId = 'note_' + Date.now();
+                const noteData = {
+                    id: noteId,
+                    x,
+                    y,
+                    text: '',
+                    themeIndex: 0,
+                    collapsed: false
+                };
+                state.notes.push(noteData);
+
+                const itemEl = iframeDoc.createElement('div');
+                itemEl.className = 'royal-star-item';
+                itemEl.id = noteId;
+                itemEl.style.left = x + 'px';
+                itemEl.style.top = y + 'px';
+
+                const openLeft = x < 300;
+                const cardPosStyle = openLeft ? 'left: 20px; right: auto; transform-origin: top left;' : 'right: 20px; left: auto; transform-origin: top right;';
+
+                itemEl.innerHTML = `
+                    <button type="button" class="royal-star-btn" title="اضغط لفتح/طي الملاحظة">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                    </button>
+                    <div class="royal-sticky-card" style="${cardPosStyle}">
+                        <div class="royal-sticky-header">
+                            <div class="royal-sticky-colors">
+                                ${NOTE_THEMES.map((t, idx) => `
+                                    <span class="royal-note-dot" data-theme="${idx}" style="background:${t.bg}; border-color:${t.border}"></span>
+                                `).join('')}
+                            </div>
+                            <div class="royal-sticky-actions">
+                                <button type="button" class="royal-sticky-act-btn fold" title="طي داخل النجمة">ㅡ</button>
+                                <button type="button" class="royal-sticky-act-btn del" title="حذف النجمة">✕</button>
+                            </div>
+                        </div>
+                        <textarea class="royal-sticky-textarea" placeholder="اكتب ملاحظتك هنا..."></textarea>
+                    </div>
+                `;
+
+                notesLayer.appendChild(itemEl);
+
+                const starBtn = itemEl.querySelector('.royal-star-btn');
+                const cardEl = itemEl.querySelector('.royal-sticky-card');
+                const foldBtn = itemEl.querySelector('.royal-sticky-act-btn.fold');
+                const delBtn = itemEl.querySelector('.royal-sticky-act-btn.del');
+                const textarea = itemEl.querySelector('.royal-sticky-textarea');
+                const colorDots = itemEl.querySelectorAll('.royal-note-dot');
+
+                itemEl.addEventListener('pointerdown', (ev) => ev.stopPropagation());
+
+                starBtn.addEventListener('click', (ev) => {
+                    ev.stopPropagation();
+                    noteData.collapsed = !noteData.collapsed;
+                    cardEl.classList.toggle('collapsed', noteData.collapsed);
+                    if (!noteData.collapsed) textarea.focus();
+                });
+
+                foldBtn.addEventListener('click', (ev) => {
+                    ev.stopPropagation();
+                    noteData.collapsed = true;
+                    cardEl.classList.add('collapsed');
+                });
+
+                delBtn.addEventListener('click', (ev) => {
+                    ev.stopPropagation();
+                    itemEl.remove();
+                    state.notes = state.notes.filter(n => n.id !== noteId);
+                });
+
+                colorDots.forEach(dot => {
+                    dot.addEventListener('click', (ev) => {
+                        ev.stopPropagation();
+                        const idx = parseInt(dot.getAttribute('data-theme'), 10);
+                        const theme = NOTE_THEMES[idx];
+                        noteData.themeIndex = idx;
+                        cardEl.style.background = theme.bg;
+                        cardEl.style.borderColor = theme.border;
+                        cardEl.style.color = theme.text;
+                    });
+                });
+
+                textarea.addEventListener('input', () => {
+                    noteData.text = textarea.value;
+                });
+
+                setTimeout(() => textarea.focus(), 50);
+            }
+
+            /* ==================== التبديل بين الأدوات ونظام النقرة / النقرتين ==================== */
+            toolButtons.forEach(btn => {
+                const tool = btn.getAttribute('data-tool');
+
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    setActiveTool(tool, true);
+                });
+
+                btn.addEventListener('dblclick', (e) => {
+                    e.stopPropagation();
+                    setActiveTool(tool, false);
+                    if (['pen', 'highlighter', 'eraser'].includes(tool)) {
+                        openPopoverForTool(tool, btn);
+                    }
+                });
+            });
+
+            function setActiveTool(tool, closePop = true) {
+                state.activeTool = tool;
+                if (closePop) closePopover();
+
+                toolButtons.forEach(b => {
+                    b.classList.toggle('active', b.getAttribute('data-tool') === tool);
+                });
+
+                if (!state.iframeReady || !drawCanvas) return;
+
+                if (tool === 'interact') {
+                    drawCanvas.style.pointerEvents = 'none';
+                    drawCanvas.style.touchAction = 'auto';
+                    drawCanvas.style.cursor = 'default';
+                    if (eraserCursor) eraserCursor.style.display = 'none';
+                } else {
+                    drawCanvas.style.pointerEvents = 'auto';
+                    drawCanvas.style.touchAction = 'none';
+
+                    if (tool === 'eraser') {
+                        drawCanvas.style.cursor = 'none';
+                    } else if (tool === 'star') {
+                        drawCanvas.style.cursor = 'copy';
+                        if (eraserCursor) eraserCursor.style.display = 'none';
+                    } else {
+                        drawCanvas.style.cursor = 'crosshair';
+                        if (eraserCursor) eraserCursor.style.display = 'none';
+                    }
+                }
+            }
+
+            /* ==================== القائمة المنبثقة لتخصيص القلم والهايلايتر والممحاة ==================== */
+            function openPopoverForTool(tool, btnElement) {
+                state.popoverTool = tool;
+
+                const btnRect = btnElement.getBoundingClientRect();
+                const centerX = btnRect.left + btnRect.width / 2;
+                const clampedX = Math.max(170, Math.min(window.innerWidth - 170, centerX));
+                popover.style.left = clampedX + 'px';
+
+                if (tool === 'pen') {
+                    popoverTitle.innerHTML = `<i class="fa-solid fa-pen-nib"></i><span>خصائص القلم الذكي</span>`;
+                    popoverColorSection.style.display = 'block';
+                    popoverOpacitySection.style.display = 'block';
+                    popoverSizeSlider.min = 1;
+                    popoverSizeSlider.max = 30;
+                    popoverSizeSlider.value = state.pen.size;
+                    popoverSizeVal.textContent = state.pen.size + ' px';
+                    popoverOpacitySlider.value = Math.round(state.pen.opacity * 100);
+                    popoverOpacityVal.textContent = Math.round(state.pen.opacity * 100) + '%';
+                    renderColorSwatches(state.pen.color);
+                } else if (tool === 'highlighter') {
+                    popoverTitle.innerHTML = `<i class="fa-solid fa-highlighter"></i><span>خصائص الهايلايتر الشفاف</span>`;
+                    popoverColorSection.style.display = 'block';
+                    popoverOpacitySection.style.display = 'block';
+                    popoverSizeSlider.min = 12;
+                    popoverSizeSlider.max = 70;
+                    popoverSizeSlider.value = state.highlighter.size;
+                    popoverSizeVal.textContent = state.highlighter.size + ' px';
+                    popoverOpacitySlider.value = Math.round(state.highlighter.opacity * 100);
+                    popoverOpacityVal.textContent = Math.round(state.highlighter.opacity * 100) + '%';
+                    renderColorSwatches(state.highlighter.color);
+                } else if (tool === 'eraser') {
+                    popoverTitle.innerHTML = `<i class="fa-solid fa-eraser"></i><span>حجم الممحاة الاحترافية</span>`;
+                    popoverColorSection.style.display = 'none';
+                    popoverOpacitySection.style.display = 'none';
+                    popoverSizeSlider.min = 10;
+                    popoverSizeSlider.max = 120;
+                    popoverSizeSlider.value = state.eraser.size;
+                    popoverSizeVal.textContent = state.eraser.size + ' px';
+                }
+
+                popover.classList.add('open');
+            }
+
+            function closePopover() {
+                popover.classList.remove('open');
+                state.popoverTool = null;
+            }
+
+            document.getElementById('btn-close-popover').addEventListener('click', closePopover);
+
+            document.addEventListener('pointerdown', (e) => {
+                if (!popover.contains(e.target) && !e.target.closest('.dock-btn')) {
+                    closePopover();
+                }
+            });
+
+            function renderColorSwatches(selectedColor) {
+                popoverColorGrid.innerHTML = '';
+                PALETTE.forEach(color => {
+                    const swatch = document.createElement('div');
+                    swatch.className = 'color-swatch' + (color.toLowerCase() === selectedColor.toLowerCase() ? ' selected' : '');
+                    swatch.style.background = color;
+                    swatch.addEventListener('click', () => {
+                        applyToolColor(color);
+                        renderColorSwatches(color);
+                    });
+                    popoverColorGrid.appendChild(swatch);
+                });
+
+                const customInput = document.createElement('input');
+                customInput.type = 'color';
+                customInput.className = 'custom-color-input';
+                customInput.value = selectedColor;
+                customInput.title = 'اختيار لون مخصص';
+                customInput.addEventListener('input', (e) => {
+                    applyToolColor(e.target.value);
+                });
+                popoverColorGrid.appendChild(customInput);
+            }
+
+            function applyToolColor(color) {
+                if (state.popoverTool === 'pen') {
+                    state.pen.color = color;
+                    penColorIndicator.style.background = color;
+                } else if (state.popoverTool === 'highlighter') {
+                    state.highlighter.color = color;
+                    highlighterColorIndicator.style.background = color;
+                }
+            }
+
+            popoverSizeSlider.addEventListener('input', (e) => {
+                const val = parseInt(e.target.value, 10);
+                popoverSizeVal.textContent = val + ' px';
+                if (state.popoverTool === 'pen') state.pen.size = val;
+                else if (state.popoverTool === 'highlighter') state.highlighter.size = val;
+                else if (state.popoverTool === 'eraser') state.eraser.size = val;
+            });
+
+            popoverOpacitySlider.addEventListener('input', (e) => {
+                const val = parseInt(e.target.value, 10);
+                popoverOpacityVal.textContent = val + '%';
+                if (state.popoverTool === 'pen') state.pen.opacity = val / 100;
+                else if (state.popoverTool === 'highlighter') state.highlighter.opacity = val / 100;
+            });
+
+            /* ==================== التراجع (Undo) والإعادة (Redo) ومسح الكل ==================== */
+            function performUndo() {
+                if (state.strokes.length === 0) {
+                    showToast('لا توجد خطوات للتراجع عنها', 'fa-circle-info');
+                    return;
+                }
+                const popped = state.strokes.pop();
+                state.redoStack.push(popped);
+                rebuildCanvasFromHistory();
+            }
+
+            function performRedo() {
+                if (state.redoStack.length === 0) {
+                    showToast('لا توجد خطوات لإعادتها', 'fa-circle-info');
+                    return;
+                }
+                const restored = state.redoStack.pop();
+                state.strokes.push(restored);
+                rebuildCanvasFromHistory();
+            }
+
+            document.getElementById('btn-undo').addEventListener('click', performUndo);
+            document.getElementById('btn-redo').addEventListener('click', performRedo);
+
+            function handleKeyboardShortcuts(e) {
+                if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+                    e.preventDefault();
+                    performUndo();
+                } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+                    e.preventDefault();
+                    performRedo();
+                }
+            }
+            window.addEventListener('keydown', handleKeyboardShortcuts);
+
+            document.getElementById('btn-clear-all').addEventListener('click', () => {
+                if (state.strokes.length === 0 && state.notes.length === 0) {
+                    showToast('الصفحة نظيفة بالفعل', 'fa-sparkles');
+                    return;
+                }
+                confirmModal.classList.add('open');
+            });
+
+            document.getElementById('btn-cancel-clear').addEventListener('click', () => {
+                confirmModal.classList.remove('open');
+            });
+
+            document.getElementById('btn-confirm-clear').addEventListener('click', () => {
+                state.strokes = [];
+                state.redoStack = [];
+                state.notes = [];
+                if (drawCtx) drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+                if (notesLayer) notesLayer.innerHTML = '';
+                confirmModal.classList.remove('open');
+                showToast('تم مسح جميع الشروحات والملاحظات بنجاح', 'fa-check');
+            });
+
+            /* ==================== ملء الشاشة وتصغير الشريط العائم ==================== */
+            document.getElementById('btn-fullscreen').addEventListener('click', () => {
+                const icon = document.getElementById('fullscreen-icon');
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(() => {});
+                    icon.className = 'fa-solid fa-compress';
+                } else {
+                    document.exitFullscreen().catch(() => {});
+                    icon.className = 'fa-solid fa-expand';
+                }
+            });
+
+            document.getElementById('btn-minimize-dock').addEventListener('click', () => {
+                closePopover();
+                dockWrapper.classList.add('minimized');
+                restoreDockBtn.classList.add('visible');
+            });
+
+            restoreDockBtn.addEventListener('click', () => {
+                dockWrapper.classList.remove('minimized');
+                restoreDockBtn.classList.remove('visible');
+            });
+
+            /* ==================== ملف HTML تفاعلي تجريبي جاهز (Demo Generator) ==================== */
+            btnLoadDemo.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const demoHTML = generateRichInteractiveDemoHTML();
+                loadHTMLIntoViewer(demoHTML, 'نموذج_الدرس_التفاعلي_الملكي.html');
+            });
+
+            function generateRichInteractiveDemoHTML() {
+                return `<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        body {
+            margin: 0;
+            background: #F8FAFC;
+            color: #0F172A;
+            line-height: 1.8;
+        }
+        .hero {
+            background: linear-gradient(135deg, #0F172A 0%, #1E3A8A 100%);
+            color: #FFFFFF;
+            padding: 60px 24px;
+            text-align: center;
+            border-bottom: 5px solid #D4AF37;
+        }
+        .hero h1 { font-size: 2.4rem; margin: 0 0 12px; color: #F59E0B; }
+        .hero p { max-width: 720px; margin: 0 auto; font-size: 1.1rem; color: #E2E8F0; }
+        .container { max-width: 960px; margin: 40px auto; padding: 0 20px; }
+        .card {
+            background: #FFFFFF;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+            border: 1px solid #E2E8F0;
+        }
+        .card h2 {
+            color: #1E3A8A;
+            margin-top: 0;
+            border-right: 5px solid #F59E0B;
+            padding-right: 14px;
+        }
+        .highlight-test-box {
+            background: #FFFBEB;
+            border: 1px solid #FDE68A;
+            padding: 20px;
+            border-radius: 14px;
+            font-size: 1.15rem;
+            color: #1E293B;
+        }
+        .interactive-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .quiz-option {
+            padding: 16px 20px;
+            border-radius: 14px;
+            border: 2px solid #CBD5E1;
+            background: #F8FAFC;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: right;
+        }
+        .quiz-option:hover { border-color: #2563EB; background: #EFF6FF; }
+        .quiz-option.correct { border-color: #10B981; background: #ECFDF5; color: #065F46; }
+        .quiz-option.wrong { border-color: #EF4444; background: #FEF2F2; color: #991B1B; }
+        .counter-box {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 16px;
+        }
+        .btn-act {
+            background: #2563EB;
+            color: #FFF;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .btn-act:hover { background: #1D4ED8; }
+        .expand-content {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: #EFF6FF;
+            border-radius: 14px;
+            border: 1px dashed #3B82F6;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>الذكاء الاصطناعي وهندسة المستقبل</h1>
+        <p>صفحة HTML تفاعلية تجريبية لاختبار ثبات الرسومات، الهايلايتر الشفاف، النجوم الذهبية، والتفاعل الحر مع الأزرار أثناء التمرير (Scroll).</p>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h2>1. اختبار القلم والهايلايتر الشفاف</h2>
+            <p>جرب اختيار <strong>الهايلايتر الشفاف</strong> من الشريط السفلي وظلل النص التالي (لاحظ كيف يظلل الكلمات بنعومة دون أن يطمسها، ويثبت مكانه تماماً عند تحريك الصفحة لأعلى وأسفل):</p>
+            <div class="highlight-test-box">
+                "يُعد التعلم العميق (Deep Learning) أحد أهم فروع الذكاء الاصطناعي الحديثة، حيث يعتمد على شبكات عصبية اصطناعية تحاكي طريقة عمل الدماغ البشري في تحليل البيانات واستنتاج الأنماط المعقدة بدقة مذهلة."
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>2. اختبار وضع التفاعل (Interact Mode) مع أنشطة الصفحة</h2>
+            <p>اختر <strong>أيقونة المؤشر العادي (الوضع التفاعلي)</strong> من الشريط السفلي لتتمكن من الإجابة على هذا السؤال التفاعلي أو الضغط على الأزرار داخل الصفحة:</p>
+            <p><strong>سؤال تفاعلي:</strong> أي مما يلي يُستخدم لمراقبة تغير أبعاد عناصر الصفحة ديناميكياً في المتصفح؟</p>
+            <div class="interactive-grid">
+                <button class="quiz-option" onclick="this.classList.add('wrong')">A) LocalStorage API</button>
+                <button class="quiz-option" onclick="this.classList.add('correct')">B) ResizeObserver API (إجابة صحيحة ✓)</button>
+                <button class="quiz-option" onclick="this.classList.add('wrong')">C) History PushState</button>
+            </div>
+
+            <div class="counter-box">
+                <button class="btn-act" onclick="let s=document.getElementById('cnt'); s.textContent = parseInt(s.textContent)+1;">اضغط لزيادة العداد التفاعلي +</button>
+                <span>العدد الحالي: <strong id="cnt" style="font-size:1.4rem; color:#2563EB;">0</strong></span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>3. اختبار التمدد الديناميكي (ResizeObserver) والنجمة الذهبية</h2>
+            <p>ضع <strong>نجمة ملاحظات ذهبية ⭐</strong> بجوار هذه الفقرة، أو اضغط على الزر أدناه لتمديد طول الصفحة ومشاهدة كيف يتمدد الـ Canvas تلقائياً دون مسح أي رسمة!</p>
+            <button class="btn-act" style="background:#D97706" onclick="const el=document.getElementById('more-box'); el.style.display = el.style.display==='block' ? 'none' : 'block';">
+                إظهار / إخفاء محتوى إضافي طويل (اختبار ResizeObserver)
+            </button>
+            <div id="more-box" class="expand-content">
+                <h3>محتوى إضافي متمدد</h3>
+                <p>لقد تغير ارتفاع وثيقة الـ HTML الآن! بفضل تقنية <code>ResizeObserver</code> وحفظ المسارات المتجهة، تم تحديث أبعاد طبقة الرسم بسلاسة تامة مع الحفاظ على جميع رسوماتك وملاحظاتك في أماكنها الدقيقة.</p>
+                <p>يمكنك الرسم هنا أيضاً والتمرير لأعلى ولأسفل للتأكد من الثبات الكامل.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>4. مساحة إضافية للتمرير (Scroll Sync Test)</h2>
+            <p>قم بالرسم هنا أو وضع نجمة ذهبية، ثم قم بعمل Scroll لأعلى الصفحة وأسفلها للتأكد من أن كل نقطة مرسومة ملتصقة بمكانها داخل المحتوى بنسبة 100%.</p>
+            <div style="height: 280px; background: repeating-linear-gradient(45deg, #F8FAFC, #F8FAFC 15px, #F1F5F9 15px, #F1F5F9 30px); border-radius: 14px; display:flex; align-items:center; justify-content:center; color:#64748B; font-weight:700;">
+                مساحة حرة لتجربة الرسم الحر ومؤشر الليزر والممحاة الدائرية
+            </div>
+        </div>
+    </div>
+</body>
+</html>`;
+            }
+
+        })();
+    </script>
+</body>
+</html>
